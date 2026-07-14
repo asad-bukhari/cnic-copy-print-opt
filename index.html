@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CNIC Copy Generator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+  <script src="https://pl30212785.effectivecpmnetwork.com/ee/86/1f/ee861f4823df9d51cbb0dc73d1dd110b.js"></script>
+  <script src="https://pl30212787.effectivecpmnetwork.com/2b/de/c1/2bdec14554acb2a5ccf3aa85b722d4f7.js"></script>
+  <script async="async" data-cfasync="false" src="https://pl30212788.effectivecpmnetwork.com/23b541bca45eaa21c119fd5775ce11c5/invoke.js"></script>
+  <script src="https://www.highperformanceformat.com/790f0d21273ef945fd1aaeef0a46ae21/invoke.js"></script>
+  <script src="https://www.highperformanceformat.com/a1d87d510dd3708b16850372612f7599/invoke.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .container {
+      flex: 1;
+      max-width: 900px;
+      margin: 0;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+    }
+    .header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    .header h1 { font-size: 28px; margin-bottom: 10px; }
+    .content { padding: 30px; }
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+    .section h2 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .form-group { margin-bottom: 20px; }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    input[type="text"], input[type="number"], select {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus { outline: none; border-color: #667eea; }
+    .file-upload { position: relative; width: 100%; }
+    .file-upload input[type="file"] { display: none; }
+    .file-upload-btn {
+      display: block; width: 100%;
+      padding: 12px 15px;
+      background: white;
+      border: 2px dashed #667eea;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      color: #667eea; font-weight: 600;
+      transition: all 0.3s;
+    }
+    .file-upload-btn:hover { background: #f0f4ff; }
+    .file-name { margin-top: 8px; font-size: 12px; color: #28a745; font-weight: 600; }
+    .btn {
+      padding: 12px 30px; border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.3s;
+    }
+    .btn-success { background: #28a745; color: white; }
+    .btn-success:hover { background: #218838; }
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-secondary { background: #6c757d; color: white; }
+    .btn-danger { background: #dc3545; color: white; }
+    .btn-danger:hover { background: #c82333; }
+    .customer-list { margin-top: 20px; }
+    .customer-item {
+      background: white; padding: 15px; border-radius: 8px; margin-bottom: 10px;
+      display: flex; justify-content: space-between; align-items: center;
+      border: 2px solid #e0e0e0;
+    }
+    .customer-info { flex: 1; }
+    .customer-name { font-weight: 600; color: #333; margin-bottom: 5px; }
+    .customer-copies { font-size: 13px; color: #666; }
+    .stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px; margin-bottom: 20px;
+    }
+    .stat-card {
+      background: white; padding: 20px; border-radius: 10px;
+      text-align: center; border: 2px solid #e0e0e0;
+    }
+    .stat-number { font-size: 32px; font-weight: 700; color: #667eea; margin-bottom: 5px; }
+    .stat-label { font-size: 13px; color: #666; text-transform: uppercase; }
+    .alert { padding: 15px 20px; border-radius: 8px; margin-bottom: 20px; font-weight: 600; }
+    .alert-success { background: #d4edda; color: #155724; border: 2px solid #c3e6cb; }
+    .alert-danger { background: #f8d7da; color: #721c24; border: 2px solid #f5c6cb; }
+    .footer {
+      text-align: center; padding: 20px;
+      background: #f8f9fa; color: #666; font-size: 14px;
+    }
+    .loading { display: none; text-align: center; padding: 20px; }
+    .loading.active { display: block; }
+    .spinner {
+      border: 4px solid #f3f3f3; border-top: 4px solid #667eea;
+      border-radius: 50%; width: 40px; height: 40px;
+      animation: spin 1s linear infinite; margin: 0 auto 10px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .button-group { display: flex; gap: 10px; margin-top: 20px; }
+    @media (max-width: 768px) {
+      .button-group { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Left Sidebar Ad -->
+  <div style="position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; width: 160px; text-align: center;">
+    <script>
+      atOptions = {
+        'key' : '790f0d21273ef945fd1aaeef0a46ae21',
+        'format' : 'iframe',
+        'height' : 600,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/790f0d21273ef945fd1aaeef0a46ae21/invoke.js"></script>
+  </div>
+  
+  <!-- Right Sidebar Ad -->
+  <div style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; width: 160px; text-align: center;">
+    <script>
+      atOptions = {
+        'key' : 'a1d87d510dd3708b16850372612f7599',
+        'format' : 'iframe',
+        'height' : 600,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+    <script src="https://www.highperformanceformat.com/a1d87d510dd3708b16850372612f7599/invoke.js"></script>
+  </div>
+  
+  <div class="container">
+    <div class="header">
+      <h1>🎯 CNIC Copy Generator</h1>
+      <p>Developed by Asad Bukhari</p>
+    </div>
+
+    <div class="content">
+      <div class="section">
+        <h2>📄 Page Settings</h2>
+        <div class="form-group">
+          <label for="pageSize">Select Page Size:</label>
+          <select id="pageSize">
+            <option value="A4">A4 (210mm × 297mm)</option>
+            <option value="A5">A5 (148mm × 210mm)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Ad Between Sections -->
+      <div style="text-align: center; margin: 20px 0; padding: 10px;">
+        <script src="https://pl30212788.effectivecpmnetwork.com/23b541bca45eaa21c119fd5775ce11c5/invoke.js"></script>
+        <div id="container-23b541bca45eaa21c119fd5775ce11c5"></div>
+      </div>
+
+      <div class="section">
+        <h2>👤 Add Customer</h2>
+        <div class="form-group">
+          <label for="customerName">Customer Name:</label>
+          <input type="text" id="customerName" placeholder="Enter customer name" />
+        </div>
+        <div class="form-group">
+          <label for="copies">Number of Copies:</label>
+          <input type="number" id="copies" min="1" max="10" value="1" />
+        </div>
+        <div class="form-group">
+          <label>CNIC Front Image:</label>
+          <div class="file-upload">
+            <input type="file" id="frontImage" accept="image/*" />
+            <label for="frontImage" class="file-upload-btn">📤 Upload Front Image</label>
+            <div id="frontFileName" class="file-name"></div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>CNIC Back Image:</label>
+          <div class="file-upload">
+            <input type="file" id="backImage" accept="image/*" />
+            <label for="backImage" class="file-upload-btn">📤 Upload Back Image</label>
+            <div id="backFileName" class="file-name"></div>
+          </div>
+        </div>
+        <button class="btn btn-success" id="addCustomerBtn">➕ Add Customer</button>
+      </div>
+
+      <!-- Ad Between Sections -->
+      <div style="text-align: center; margin: 20px 0; padding: 10px;">
+        <script async="async" data-cfasync="false" src="https://pl30212788.effectivecpmnetwork.com/23b541bca45eaa21c119fd5775ce11c5/invoke.js"></script>
+        <div id="container-23b541bca45eaa21c119fd5775ce11c5-2"></div>
+      </div>
+
+      <div class="section" id="customerSection" style="display: none">
+        <h2>📋 Customer List</h2>
+        <div class="stats">
+          <div class="stat-card">
+            <div class="stat-number" id="totalCustomers">0</div>
+            <div class="stat-label">Total Customers</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="totalCopies">0</div>
+            <div class="stat-label">Total Copies</div>
+          </div>
+        </div>
+        <div class="customer-list" id="customerList"></div>
+        <div class="button-group">
+          <button class="btn btn-primary" id="generatePDFBtn">🖨️ Generate PDF</button>
+          <button class="btn btn-secondary" id="resetAllBtn">🔄 Reset All</button>
+        </div>
+      </div>
+
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Generating PDF... Please wait</p>
+      </div>
+
+      <div id="alertContainer"></div>
+    </div>
+
+    <div class="footer">© Developed by Asad Bukhari | +92 3491590380</div>
+    </div>
+    <div style="text-align: center; margin-top: 10px;">
+      <script>
+        atOptions = {
+          'key' : 'a1d87d510dd3708b16850372612f7599',
+          'format' : 'iframe',
+          'height' : 60,
+          'width' : 468,
+          'params' : {}
+        };
+      </script>
+    </div>
+  </div>
+
+  <script>
+    // ========================================
+    // CONSTANTS
+    // ========================================
+    const CONFIG = {
+      PAGE_SIZES: {
+        A4: { width: 595, height: 842, orientation: "portrait" },
+        A5: { width: 595, height: 420, orientation: "landscape" }
+      },
+      CNIC: {
+        MM: { width: 99.5, height: 68 },
+        get SIZE() {
+          return {
+            width: this.MM.width * 2.83465,
+            height: this.MM.height * 2.83465
+          };
+        }
+      },
+      LAYOUT: {
+        MARGIN: 10,
+        SPACING: 10,
+        COLUMNS: 2
+      },
+      ALERT_TIMEOUT: 5000
+    };
+
+    const ELEMENTS = {
+      pageSize: document.getElementById("pageSize"),
+      customerName: document.getElementById("customerName"),
+      copies: document.getElementById("copies"),
+      frontImage: document.getElementById("frontImage"),
+      backImage: document.getElementById("backImage"),
+      frontFileName: document.getElementById("frontFileName"),
+      backFileName: document.getElementById("backFileName"),
+      customerSection: document.getElementById("customerSection"),
+      customerList: document.getElementById("customerList"),
+      totalCustomers: document.getElementById("totalCustomers"),
+      totalCopies: document.getElementById("totalCopies"),
+      loading: document.getElementById("loading"),
+      alertContainer: document.getElementById("alertContainer"),
+      addCustomerBtn: document.getElementById("addCustomerBtn"),
+      generatePDFBtn: document.getElementById("generatePDFBtn"),
+      resetAllBtn: document.getElementById("resetAllBtn")
+    };
+
+    // ========================================
+    // STATE MANAGEMENT
+    // ========================================
+    const state = {
+      customers: [],
+      customerCounter: 0,
+      
+      addCustomer(customer) {
+        this.customers.push({ ...customer, id: ++this.customerCounter });
+      },
+      
+      removeCustomer(id) {
+        this.customers = this.customers.filter(c => c.id !== id);
+      },
+      
+      clearAll() {
+        this.customers = [];
+        this.customerCounter = 0;
+      },
+      
+      getTotalCopies() {
+        return this.customers.reduce((sum, c) => sum + c.copies, 0);
+      }
+    };
+
+    // ========================================
+    // UTILITY FUNCTIONS
+    // ========================================
+    const utils = {
+      showAlert(message, type = "success") {
+        const alertDiv = document.createElement("div");
+        alertDiv.className = `alert alert-${type}`;
+        alertDiv.textContent = message;
+        ELEMENTS.alertContainer.appendChild(alertDiv);
+        setTimeout(() => alertDiv.remove(), CONFIG.ALERT_TIMEOUT);
+      },
+
+      async readFileAsDataURL(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      },
+
+      toggleLoading(show) {
+        ELEMENTS.loading.classList.toggle("active", show);
+      },
+
+      clearFormInputs() {
+        ELEMENTS.customerName.value = "";
+        ELEMENTS.copies.value = 1;
+        ELEMENTS.frontImage.value = "";
+        ELEMENTS.backImage.value = "";
+        ELEMENTS.frontFileName.textContent = "";
+        ELEMENTS.backFileName.textContent = "";
+      }
+    };
+
+    // ========================================
+    // UI HANDLERS
+    // ========================================
+    const ui = {
+      updateFileDisplay(element, fileName) {
+        element.textContent = `✓ ${fileName}`;
+      },
+
+      renderCustomerList() {
+        const html = state.customers.map(customer => `
+          <div class="customer-item">
+            <div class="customer-info">
+              <div class="customer-name">${customer.name}</div>
+              <div class="customer-copies">${customer.copies} ${customer.copies === 1 ? "copy" : "copies"}</div>
+            </div>
+            <button class="btn btn-danger" data-customer-id="${customer.id}">🗑️ Remove</button>
+          </div>
+        `).join("");
+        
+        ELEMENTS.customerList.innerHTML = html;
+        this.updateStats();
+        this.toggleCustomerSection();
+      },
+
+      updateStats() {
+        ELEMENTS.totalCustomers.textContent = state.customers.length;
+        ELEMENTS.totalCopies.textContent = state.getTotalCopies();
+      },
+
+      toggleCustomerSection() {
+        ELEMENTS.customerSection.style.display = state.customers.length ? "block" : "none";
+      }
+    };
+
+    // ========================================
+    // CUSTOMER MANAGEMENT
+    // ========================================
+    const customerManager = {
+      async add() {
+        const name = ELEMENTS.customerName.value.trim() || `Customer ${state.customerCounter + 1}`;
+        const copies = parseInt(ELEMENTS.copies.value);
+        const frontFile = ELEMENTS.frontImage.files[0];
+        const backFile = ELEMENTS.backImage.files[0];
+
+        if (!frontFile || !backFile) {
+          utils.showAlert("❌ Please upload both images", "danger");
+          return;
+        }
+
+        try {
+          const [frontImage, backImage] = await Promise.all([
+            utils.readFileAsDataURL(frontFile),
+            utils.readFileAsDataURL(backFile)
+          ]);
+
+          state.addCustomer({ name, copies, frontImage, backImage });
+          ui.renderCustomerList();
+          utils.clearFormInputs();
+          utils.showAlert(`✅ ${name} added successfully!`);
+        } catch (error) {
+          utils.showAlert("❌ Error reading images", "danger");
+          console.error(error);
+        }
+      },
+
+      remove(id) {
+        state.removeCustomer(id);
+        ui.renderCustomerList();
+        utils.showAlert("Customer removed");
+      },
+
+      resetAll() {
+        if (confirm("Reset all data?")) {
+          state.clearAll();
+          ui.renderCustomerList();
+          utils.clearFormInputs();
+          utils.showAlert("All data cleared");
+        }
+      }
+    };
+
+    // ========================================
+    // PDF GENERATION
+    // ========================================
+    const pdfGenerator = {
+      getJsPDF() {
+        // Wait for library to load and try multiple access patterns
+        const lib = window.jspdf || window.jsPDF;
+        if (!lib) return null;
+        
+        // Try different ways the library might be exposed
+        if (typeof lib === 'function') return lib;
+        if (lib.jsPDF) return lib.jsPDF;
+        return null;
+      },
+
+      async ensureJsPDFLoaded() {
+        // Wait a bit for the script to fully load if needed
+        let attempts = 0;
+        while (attempts < 20) {
+          const jsPDF = this.getJsPDF();
+          if (jsPDF) return jsPDF;
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+        throw new Error("jsPDF library failed to load. Please refresh the page.");
+      },
+
+      async createPDFInstance(pageConfig) {
+        const jsPDF = await this.ensureJsPDFLoaded();
+
+        return new jsPDF({
+          orientation: pageConfig.orientation,
+          unit: "pt",
+          format: pageConfig.orientation === "landscape" 
+            ? [pageConfig.height, pageConfig.width] 
+            : [pageConfig.width, pageConfig.height]
+        });
+      },
+
+      calculateLayout(pageConfig) {
+        const cnicSize = CONFIG.CNIC.SIZE;
+        const { COLUMNS, MARGIN, SPACING } = CONFIG.LAYOUT;
+        
+        const totalWidth = cnicSize.width * COLUMNS + SPACING * (COLUMNS - 1);
+        const xMargin = (pageConfig.width - totalWidth) / 2;
+        const availableHeight = pageConfig.height - 2 * MARGIN;
+        const rows = Math.floor((availableHeight + SPACING) / (cnicSize.height + SPACING));
+        const perPage = COLUMNS * rows;
+
+        return { xMargin, perPage, cnicSize };
+      },
+
+      calculatePosition(index, layout) {
+        const { COLUMNS, MARGIN, SPACING } = CONFIG.LAYOUT;
+        const { xMargin, cnicSize } = layout;
+        
+        const row = Math.floor(index / COLUMNS);
+        const col = index % COLUMNS;
+        
+        return {
+          x: xMargin + col * (cnicSize.width + SPACING),
+          y: MARGIN + row * (cnicSize.height + SPACING)
+        };
+      },
+
+      addImageToPDF(pdf, image, position, cnicSize) {
+        pdf.addImage(image, "JPEG", position.x, position.y, cnicSize.width, cnicSize.height);
+      },
+
+      duplicatePages(pdf) {
+        const totalPages = pdf.internal.pages.length - 1;
+        for (let i = 1; i <= totalPages; i++) {
+          const pageData = pdf.internal.pages[i];
+          pdf.addPage();
+          pdf.internal.pages[pdf.internal.pages.length - 1] = pageData;
+        }
+      },
+
+      async generate() {
+        if (state.customers.length === 0) {
+          utils.showAlert("❌ Add at least one customer", "danger");
+          return;
+        }
+
+        utils.toggleLoading(true);
+
+        try {
+          const pageType = ELEMENTS.pageSize.value;
+          const pageConfig = CONFIG.PAGE_SIZES[pageType];
+          const pdf = await this.createPDFInstance(pageConfig);
+          const layout = this.calculateLayout(pageConfig);
+
+          let positionIndex = 0;
+
+          for (const customer of state.customers) {
+            for (let copyNum = 0; copyNum < customer.copies; copyNum++) {
+              // Add front image
+              if (positionIndex >= layout.perPage) {
+                pdf.addPage();
+                positionIndex = 0;
+              }
+              const frontPos = this.calculatePosition(positionIndex, layout);
+              this.addImageToPDF(pdf, customer.frontImage, frontPos, layout.cnicSize);
+              positionIndex++;
+
+              // Add back image
+              if (positionIndex >= layout.perPage) {
+                pdf.addPage();
+                positionIndex = 0;
+              }
+              const backPos = this.calculatePosition(positionIndex, layout);
+              this.addImageToPDF(pdf, customer.backImage, backPos, layout.cnicSize);
+              positionIndex++;
+            }
+          }
+
+          this.duplicatePages(pdf);
+          pdf.save("All_Customers_CNIC_Copies.pdf");
+          utils.showAlert("✅ PDF generated successfully (2 pages)!");
+        } catch (error) {
+          console.error("PDF Generation Error:", error);
+          utils.showAlert(`❌ Error: ${error.message}`, "danger");
+        } finally {
+          utils.toggleLoading(false);
+        }
+      }
+    };
+
+    // ========================================
+    // EVENT LISTENERS
+    // ========================================
+    function initEventListeners() {
+      ELEMENTS.frontImage.addEventListener("change", (e) => {
+        if (e.target.files[0]) {
+          ui.updateFileDisplay(ELEMENTS.frontFileName, e.target.files[0].name);
+        }
+      });
+
+      ELEMENTS.backImage.addEventListener("change", (e) => {
+        if (e.target.files[0]) {
+          ui.updateFileDisplay(ELEMENTS.backFileName, e.target.files[0].name);
+        }
+      });
+
+      ELEMENTS.addCustomerBtn.addEventListener("click", () => {
+        customerManager.add();
+      });
+
+      ELEMENTS.generatePDFBtn.addEventListener("click", () => {
+        pdfGenerator.generate();
+      });
+
+      ELEMENTS.resetAllBtn.addEventListener("click", () => {
+        customerManager.resetAll();
+      });
+
+      ELEMENTS.customerList.addEventListener("click", (e) => {
+        if (e.target.closest(".btn-danger")) {
+          const id = parseInt(e.target.closest(".btn-danger").dataset.customerId);
+          customerManager.remove(id);
+        }
+      });
+    }
+
+    // ========================================
+    // INITIALIZATION
+    // ========================================
+    initEventListeners();
+  </script>
+  <div style="text-align: center; margin-top: 10px;">
+    <script>
+      atOptions = {
+        'key' : '790f0d21273ef945fd1aaeef0a46ae21',
+        'format' : 'iframe',
+        'height' : 600,
+        'width' : 160,
+        'params' : {}
+      };
+    </script>
+  </div>
+  <div style="text-align: center; margin-top: 10px;">
+    <script>
+      atOptions = {
+        'key' : 'a1d87d510dd3708b16850372612f7599',
+        'format' : 'iframe',
+        'height' : 60,
+        'width' : 468,
+        'params' : {}
+      };
+    </script>
+  </div>
+</body>
+</html>
