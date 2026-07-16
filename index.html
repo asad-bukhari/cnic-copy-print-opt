@@ -131,15 +131,23 @@
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .button-group { display: flex; gap: 10px; margin-top: 20px; }
+    @media (max-width: 1200px) {
+      .sidebar-ad { display: none; }
+    }
     @media (max-width: 768px) {
       .button-group { flex-direction: column; }
       .btn { width: 100%; justify-content: center; }
+      body { padding: 10px; }
+      .content { padding: 15px; }
+      .header { padding: 20px; }
+      .header h1 { font-size: 22px; }
+      .section { padding: 15px; }
     }
   </style>
 </head>
 <body>
   <!-- Left Sidebar Ad -->
-  <div style="position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; width: 160px; text-align: center;">
+  <div class="sidebar-ad" style="position: fixed; left: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; width: 160px; text-align: center;">
     <script>
       atOptions = {
         'key' : '790f0d21273ef945fd1aaeef0a46ae21',
@@ -153,7 +161,7 @@
   </div>
   
   <!-- Right Sidebar Ad -->
-  <div style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; width: 160px; text-align: center;">
+  <div class="sidebar-ad" style="position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 1000; width: 160px; text-align: center;">
     <script>
       atOptions = {
         'key' : '790f0d21273ef945fd1aaeef0a46ae21',
